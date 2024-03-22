@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer')
 
 module.exports={
 
-    SendEmail:async(email,otp,name)=>{
+    sendEmail:async(email,otp,name)=>{
         
 
         const transporter = nodemailer.createTransport({
@@ -31,8 +31,8 @@ module.exports={
               <li><strong>OTP: ${otp}</strong></li>
               
             </ul>
-            <p><strong>OTP will Expire in 5 minutes</strong></p>
-            <p>Thank you for your registration. If you have any queries, contact the Software Campus info team.</p>
+            <p>OTP will Expire in <strong> 5 minutes</strong></p>
+            <p>Thank you for your login. If you have any queries, contact the Software Campus info team.</p>
             <p>Best regards,</p>
             <h4>Software Campus</h4>
             `,

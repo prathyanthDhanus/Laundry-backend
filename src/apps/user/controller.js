@@ -24,11 +24,13 @@ module.exports = {
       const { email,password } = req.body;
       const findUser = await userLoginDB(email);
       const userData = await userLoginService(findUser,password);
-  
+    
       return res.status(200).json({
         status: "success",
         message: "User verified successfully ",
         data: userData,
       });
     },
+
+    
   };
