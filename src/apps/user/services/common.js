@@ -23,12 +23,7 @@ module.exports = {
       throw new Error("Wrong password");
     }
 
-    const sendOtp = await sendOtpAndSave(
-      findUser?.email,
-      findUser?._id,
-      findUser.userName
-    );
-
+    const sendOtp = await module.exports.sendOtpService(findUser);
     return sendOtp;
   },
 
@@ -76,5 +71,17 @@ module.exports = {
         throw new Error("Login failed");
       }
     }
+  },
+
+  //------------------ send otp -----------------
+
+  sendOtpService: async (findUser) => {
+    const sendOtp = await sendOtpAndSave(
+      findUser?.email,
+      findUser?._id,
+      findUser?.userName
+    );
+
+    return sendOtp;
   },
 };

@@ -26,7 +26,7 @@ module.exports = {
   //--------------- user login --------------
 
   userLoginDB: async (email) => {
-    const findUser = await userModel.findOne({ email });
+    const findUser = await userModel.findOne({email:email });
 
     if (findUser) {
       return findUser;
@@ -41,7 +41,7 @@ module.exports = {
 
   //------------- verify otp ---------------
 
-  verifyotpDb: async (userId, otp) => {
+  verifyotpLoginDb: async (userId, otp) => {
   
     const numOtp = +otp; // conveting the otp in number
     const findUser = await otpModel
