@@ -6,6 +6,10 @@ const user = require("../user/controller");
 router 
 .post("/register",tryCatch(user.userRegister))
 .post("/login",tryCatch(user.userlogin))
+.post("/verifyotp",tryCatch(user.verifyOtp))
+.post("/resendotp",tryCatch(user.userlogin))
+
+
 
 
 
