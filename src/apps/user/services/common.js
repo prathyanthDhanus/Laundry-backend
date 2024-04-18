@@ -1,20 +1,10 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const refreshTokenModel = require("../../../apps/refreshToken/model/refreshTokenUser");
+const refreshTokenUserModel = require("../../../apps/refreshToken/model/refreshTokenUser");
 const { userRegisterDB, sendOtpDB } = require("./db");
 const { sendOtpAndSave } = require("../../otp/sendOtp");
 
 module.exports = {
-  //----------- user register ------------
-
-  userRegisterService: async (body) => {
-    const { password } = body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const userData = await userRegisterDB(body, hashedPassword);
-
-    return userData;
-  },
-
   //--------- user login ---------------
 
   userLoginService: async (findUser, password) => {
@@ -29,9 +19,9 @@ module.exports = {
 
   //-------------- generate token ----------------
 
-  tokenService: async (checkOtp, userId) => {
+  tokenServiceUser: async (checkOtp, userId) => {
     if (checkOtp === true) {
-      const secret = process.env.SECRET_KEY;
+      const secret = process.env.USERSECRET_KEY;
       const token = jwt.sign(
         {
           userId: userId,
@@ -50,17 +40,20 @@ module.exports = {
       );
 
       if (token && refreshToken) {
-        const existingRefreshToken = await refreshTokenModel.findOne({
+        const existingRefreshToken = await refreshTokenUserModel.findOne({
           userId: userId,
         });
 
         if (existingRefreshToken) {
-          await refreshTokenModel.findByIdAndUpdate(existingRefreshToken?._id, {
-            token: refreshToken,
-          });
+          await refreshTokenUserModel.findByIdAndUpdate(
+            existingRefreshToken?._id,
+            {
+              token: refreshToken,
+            }
+          );
           return token;
         } else {
-          const createRefreshToken = new refreshTokenModel({
+          const createRefreshToken = new refreshTokenUserModel({
             token: refreshToken,
             userId: userId,
           });

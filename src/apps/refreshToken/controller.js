@@ -1,15 +1,16 @@
 const jwt = require("jsonwebtoken");
 const refreshTokenModel = require("./model/refreshTokenUser");
+const refreshTokenAdminModel = require("./model/refreshTokenAdmin");
 
 module.exports = {
-  refreshToken: async (req, res) => {
+  refreshTokenUser: async (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       return res.status(422).json({ error: "Access Token Not Found ❌" });
     }
 
     const token = authHeader?.split(" ")[1];
-    const user = jwt.decode(token);
+    const user = jwt.decode(token); //decoding the userid from the token
     const existingRefreshToken = await refreshTokenModel.findOne({
       userId: user?.userId,
     });
@@ -64,4 +65,66 @@ module.exports = {
       return res.status(422).json({ error: "Refresh Token Not Available ❌" });
     }
   },
+  refreshTokenAdmin:async(req,res)=>{
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(422).json({ error: "Access Token Not Found ❌" });
+    }
+
+    const token = authHeader?.split(" ")[1];
+    const admin = jwt.decode(token);
+    const existingRefreshToken = await refreshTokenAdminModel.findOne({
+      adminId: admin?.adminId,
+    });
+
+    if (existingRefreshToken) {
+      jwt.verify(
+        existingRefreshToken?.token,
+        process.env.SECRET_KEY_STUDENT,
+        async (err, decoded) => {
+          if (err) {
+            return res.status(422).json({ error: "Invalid refresh token ❌" });
+          } else {
+            const secret = process.env.SECRET_KEY_STUDENT;
+
+                    const refreshToken = jwt.sign({
+                        adminId: admin?.adminId,
+                        date:Date.now()
+                    },
+                        secret,
+                    {
+                        expiresIn: '3d'
+                    }
+                    );
+
+            await refreshTokenAdminModel.findByIdAndUpdate(
+              existingRefreshToken?._id,
+              { token: refreshToken }
+            );
+
+            const token = jwt.sign(
+              {
+                adminId: admin?.adminId,
+                
+              },
+              secret,
+              {
+                expiresIn: "1h",
+              }
+            );
+
+            return res.status(200).json({
+              status: "success",
+              message: "Successfully logged in",
+              data: token,
+            });
+          }
+        }
+      );
+    } else {
+      return res.status(422).json({ error: "Refresh Token Not Available ❌" });
+    }
+
+  }
 };

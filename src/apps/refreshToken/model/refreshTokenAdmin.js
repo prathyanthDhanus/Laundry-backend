@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 
-const refreshTokenUser = new mongoose.Schema(
+const refreshTokenAdmin = new mongoose.Schema(
   {
     token: {
       type: String,
       required: true
     },
-    userId: {
+    adminId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'admin',
       required: true
     }
   },
@@ -17,5 +17,5 @@ const refreshTokenUser = new mongoose.Schema(
   }
 );
 
-const refreshTokenUserModel = mongoose.model("refreshtokenUser", refreshTokenUser);
-module.exports = refreshTokenUserModel;
+const refreshTokenAdminModel = mongoose.model("refreshtokenAdmin", refreshTokenAdmin);
+module.exports = refreshTokenAdminModel;

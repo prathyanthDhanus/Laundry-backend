@@ -14,7 +14,13 @@ app.use(expres.json());
 app.use(cors());
 
 const userRoute = require("./src/apps/user/route")
-app.use("/api/user",userRoute)
+app.use("/api/user",userRoute);
+
+const refreshToken = require("./src/apps/refreshToken/route")
+app.use("/api/admin",refreshToken)
+
+const adminRoute = require("./src/apps/admin/route")
+app.use("/api/admin",adminRoute)
 
 
 //mongodb connection setup
