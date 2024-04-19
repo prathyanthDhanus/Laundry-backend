@@ -5,7 +5,7 @@ const { userRegisterDB, sendOtpDB } = require("./db");
 const { sendOtpAndSave } = require("../../otp/sendOtp");
 
 module.exports = {
-  //--------- user login ---------------
+  //===================== user login ===================
 
   userLoginService: async (findUser, password) => {
     const comparePassword = await bcrypt.compare(password, findUser?.password);
@@ -17,7 +17,7 @@ module.exports = {
     return sendOtp;
   },
 
-  //-------------- generate token ----------------
+  //================== generate token ==================
 
   tokenServiceUser: async (checkOtp, userId) => {
     if (checkOtp === true) {
@@ -66,7 +66,7 @@ module.exports = {
     }
   },
 
-  //------------------ send otp -----------------
+  //============== send otp ================
 
   sendOtpService: async (findUser) => {
     const sendOtp = await sendOtpAndSave(
@@ -77,4 +77,8 @@ module.exports = {
 
     return sendOtp;
   },
+
+ 
+
+
 };

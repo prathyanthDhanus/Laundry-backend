@@ -1,7 +1,7 @@
 const { adminLoginDb, adminRegisterDb } = require("../admin/services/db");
 
 module.exports = {
-  //----------------- admin register ---------------------
+  //================== admin register ====================
 
   adminRegister: async (req, res) => {
     const { userName, password } = req.body;
@@ -14,11 +14,10 @@ module.exports = {
     });
   },
 
-  //------------------- admin login -----------------------
+  //====================== admin login =====================
 
   adminLogin: async (req, res) => {
     const { userName, password, adminId } = req.body;
-    // const password = req.body.password;
     const findAdmin = await adminLoginDb(userName, password, adminId);
 
     return res.status(200).json({

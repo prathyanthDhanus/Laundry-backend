@@ -5,7 +5,7 @@ const otpModel = require("../../otp/models/otpSchema");
 const bcrypt = require("bcrypt");
 
 module.exports = {
-  //----------- user register ------------
+  //================ user register ===============
 
   userRegisterDB: async (body) => {
     const { email, password } = body;
@@ -17,7 +17,7 @@ module.exports = {
         "User already exist",
         409
       );
-    } 
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -26,7 +26,7 @@ module.exports = {
     return userCreate;
   },
 
-  //--------------- user login --------------
+  //================ user login ================
 
   userLoginDB: async (email) => {
     const findUser = await userModel.findOne({ email: email });
@@ -42,7 +42,7 @@ module.exports = {
     );
   },
 
-  //------------- verify otp ---------------
+  //================= verify otp ================
 
   verifyotpLoginDb: async (userId, otp) => {
     const numOtp = +otp; // conveting the otp in number
@@ -70,7 +70,7 @@ module.exports = {
     return otpData === numOtp;
   },
 
-  //---------------- create new password -----------------
+  //================= create new password ================
 
   createNewPasswordDb: async (newPassword, userId) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -83,6 +83,36 @@ module.exports = {
     if (!findUser) {
       throw new AppError(
         "Field validation error:Password updation failed",
+        "User not found",
+        404
+      );
+    }
+    return findUser;
+  },
+
+  //================= add user profile ==================
+
+  adduserProfileDb: async (body, userId) => {
+    const findUser = await userModel.findByIdAndUpdate(userId, body);
+
+    if (!findUser) {
+      throw new AppError(
+        "Field validation error:Profile updation failed",
+        "User not found",
+        404
+      );
+    }
+
+    return findUser;
+  },
+
+  //=============== get user profile =================
+
+  getUserProfileDb: async (userId) => {
+    const findUser = await userModel.findById({ _id: userId });
+    if (!findUser) {
+      throw new AppError(
+        "Field validation error:User finding failed",
         "User not found",
         404
       );

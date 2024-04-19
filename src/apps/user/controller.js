@@ -9,10 +9,12 @@ const {
   verifyotpLoginDb,
   userRegisterDB,
   createNewPasswordDb,
+  adduserProfileDb,
+  getUserProfileDb
 } = require("./services/db");
 
 module.exports = {
-  //------------- user register ------------
+  //================== user register ==================
 
   userRegister: async (req, res) => {
     const { body } = req;
@@ -26,7 +28,7 @@ module.exports = {
     });
   },
 
-  //----------- user login -------------
+  //============= user login ===============
 
   userlogin: async (req, res) => {
     const { email, password } = req.body;
@@ -40,10 +42,9 @@ module.exports = {
     });
   },
 
-  //---------------- otp verification login ---------------
+  //================ otp verification login ===============
 
   verifyOtpLogin: async (req, res) => {
-    
     const { userId, otp } = req.body;
     console.log(userId, otp);
 
@@ -57,7 +58,7 @@ module.exports = {
     });
   },
 
-  //---------------- otp verification ------------------
+  //============== otp verification ================
 
   verifyOtp: async (req, res) => {
     const { otp } = req.body;
@@ -73,7 +74,7 @@ module.exports = {
     });
   },
 
-  //-------------- forgot password ------------------
+  //================ forgot password =================
 
   forgotPassword: async (req, res) => {
     const { email } = req.body;
@@ -87,7 +88,7 @@ module.exports = {
     });
   },
 
-  //---------------- create new password -------------------
+  //================ create new password =================
 
   createNewPassword: async (req, res) => {
     const { newPassword, userId } = req.body;
@@ -97,6 +98,32 @@ module.exports = {
       status: "success",
       message: "Password updated successfully",
       data: userData,
+    });
+  },
+
+  //================ add profile =================
+
+  addUserProfile: async (req, res) => {
+    const { body } = req;
+    const userId = req.user?.userId;
+    const userData = await adduserProfileDb(body, userId);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Profile added successfully",
+      data: userData,
+    });
+  },
+
+  //================= get profile ================
+
+  getUserProfile: async (req, res) => {
+    const userId = req.user?.userId;
+    const findUser = await getUserProfileDb(userId);
+    return res.status(200).json({
+      status: "success",
+      message: "Profile fetched successfully",
+      data: findUser,
     });
   },
 };

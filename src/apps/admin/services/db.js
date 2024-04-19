@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 
 module.exports = {
 
-    //------------------- admin register ---------------------
+    //================= admin register ===================
 
   adminRegisterDb: async (userName, password) => {
     const findAdmin = await adminModal.findOne({ userName: userName });
@@ -24,12 +24,9 @@ module.exports = {
     await createAdmin.save();
   },
 
-  //----------------------- admin login -----------------------
+  //===================== admin login ====================
 
   adminLoginDb: async (userName, password,adminId) => {
-    // const username = process.env.ADMIN_USERNAME; //requiring username
-    // const passWord = process.env.ADMIN_PASSWORD; // password ,
-    // const adminsecretkey = process.env.ADMINSECRET_KEY; //admin secrete key from .env
     
     const findAdmin = await adminModal.findOne({userName:userName});
     const comparePassword = await bcrypt.compare(password, findAdmin?.password);

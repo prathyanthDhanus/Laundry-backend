@@ -14,8 +14,10 @@ router
 .post("/verify-otp",tryCatch(user.verifyOtp))
 .post("/forgot/password",tryCatch(user.forgotPassword))
 .post("/new-password",tryCatch(user.createNewPassword))
+.post("/profiles",tokenVerifyUser,tryCatch(user.addUserProfile))//profile adding and updating
 
 
+.get("/profiles",tokenVerifyUser,tryCatch(user.getUserProfile))
 
 
 

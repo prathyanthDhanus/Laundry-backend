@@ -22,6 +22,9 @@ app.use("/api/admin",refreshToken)
 const adminRoute = require("./src/apps/admin/route")
 app.use("/api/admin",adminRoute)
 
+const category = require("./src/apps/category/route")
+app.use("/api/admin",category)
+
 
 //mongodb connection setup
 mongoose.connect(url)
