@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const tryCatch = require("../../utils/tryCatch");
 const user = require("../user/controller");
+const category = require("../category/controller");
 const {tokenVerifyUser} = require("../../utils/jwtToken");
 
 
@@ -19,6 +20,8 @@ router
 
 .get("/profiles",tokenVerifyUser,tryCatch(user.getUserProfile))
 
+
+.get("/category-user",tokenVerifyUser,tryCatch(category.getCategory))
 
 
 

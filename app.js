@@ -17,14 +17,16 @@ const userRoute = require("./src/apps/user/route")
 app.use("/api/user",userRoute);
 
 const refreshToken = require("./src/apps/refreshToken/route")
-app.use("/api/admin",refreshToken)
+app.use("/api/admin",refreshToken);
 
 const adminRoute = require("./src/apps/admin/route")
-app.use("/api/admin",adminRoute)
+app.use("/api/admin",adminRoute);
 
 const category = require("./src/apps/category/route")
-app.use("/api/admin",category)
+app.use("/api/admin",category);
 
+const subCategory = require("./src/apps/subCategory/route")
+app.use("/api/admin",subCategory);
 
 //mongodb connection setup
 mongoose.connect(url)
