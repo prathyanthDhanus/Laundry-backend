@@ -8,12 +8,24 @@ const orderSchema = new mongoose.Schema({
   date: {
     type: Date,
     required: true,
-    default: Date.now,
+    // default: Date.now,
   },
   totalAmount: {
     type: Number,
     required: true,
   },
+  orderedAdress: [{
+    addressLandMark:{
+      type: String,
+    required: true,
+    },
+    address:{
+      type: String,
+    required: true,
+    },
+  
+  
+  }],
   subcategory: [
     {
       subCategoryId: {
@@ -36,7 +48,6 @@ const orderSchema = new mongoose.Schema({
   },
   cancelledReason: {
     type: String,
-    
   },
 });
 

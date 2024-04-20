@@ -5,7 +5,7 @@ const order = require("../orderDetails/controller");
 const {tokenVerifyUser} = require("../../utils/jwtToken");
 
 router 
-      .post("/order",tryCatch(order.addOrder))
+      .post("/order",tokenVerifyUser,tryCatch(order.addOrder))
 
 
  module.exports = router;
