@@ -46,8 +46,6 @@ module.exports = {
 
   verifyOtpLogin: async (req, res) => {
     const { userId, otp } = req.body;
-    console.log(userId, otp);
-
     const checkOtp = await verifyotpLoginDb(userId, otp);
     const token = await tokenServiceUser(checkOtp, userId);
 
@@ -120,7 +118,7 @@ module.exports = {
   getUserProfile: async (req, res) => {
     const userId = req.user?.userId;
     const findUser = await getUserProfileDb(userId);
-    
+
     return res.status(200).json({
       status: "success",
       message: "Profile fetched successfully",

@@ -17,6 +17,9 @@ const subCategorySchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  image : {
+    type:String
+  }
 });
 
 const subCategory = mongoose.model("subcategory", subCategorySchema);

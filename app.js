@@ -28,6 +28,9 @@ app.use("/api/admin",category);
 const subCategory = require("./src/apps/subCategory/route")
 app.use("/api/admin",subCategory);
 
+const order = require("./src/apps/orderDetails/route")
+app.use("/api/user",order)
+
 //mongodb connection setup
 mongoose.connect(url)
     .then(() => console.log("mongodb atlas connected"))

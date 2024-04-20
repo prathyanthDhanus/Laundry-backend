@@ -7,7 +7,6 @@ module.exports={
 
     sendEmail:async(email,otp,name)=>{
         
-
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             port: 587,
