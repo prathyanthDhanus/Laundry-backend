@@ -11,14 +11,18 @@ module.exports = {
     subCategoryName,
     quantity,
     date,
-    addressLandMark,
-      address
+    landMark,
+    address
+    
   ) => {
+    //saving the order to the server
     const order = new orderModel({
       totalAmount,
       userId,
-      date:date,
-      orderedAdress :[{ addressLandMark,address}],
+      date: date,
+      orderedAdress: [
+        { addressLandMark: landMark, address: address },
+      ],
       subcategory: [{ subCategoryId, subCategoryName, quantity }],
     });
     return order.save();
@@ -26,42 +30,30 @@ module.exports = {
 
   //============ order is exist current date to the address =============
 
-  orderExisting: async (userId, addressLandMark) => {
+  orderExisting: async (userId, primaryAddressLandMark) => {
     const currentDate = new Date().toISOString().split("T")[0];
-    const existingOrders = await orderModel.find({userId:userId},{date:currentDate}).populate("userId");
-    // console.log("existingOrder",existingOrders)
-    if (existingOrders.length === 0) {
-        return;
-      }
-      for (const existingOrder of existingOrders) {
-        const date = existingOrder.date.toISOString().split("T")[0];
-        const user = existingOrder.userId; 
-        const userAddressLandmark = user.primaryAddressLandMark;
-        
-        // Check if the order matches the current address landmark
-        if (currentDate === date && userAddressLandmark === addressLandMark) {
-         throw new Error("exist")
-        }
-      }
+    const existingOrder = await orderModel
+      .findOne({ userId: userId, date: currentDate })
+      .populate("userId");
     
-      // If no matching order found, return undefined
+    if (!existingOrder) {
       return;
-    // const date = existingOrder.date.toISOString().split("T")[0];
-    // const user = existingOrder.userId; 
-    // // const userAddress = user.primaryAddress;
-    // const userAddressLandmark = user.primaryAddressLandMark;
-    // console.log("llllllll",userAddressLandmark,addressLandMark)
-    // // console.log(addressLandMark,address)
-    // // const findUser = await userModel.findById( userId);
-    // // console.log(findUser)
-    // // const userAddress = existingOrder.primaryAddress;
-    // // console.log("kkkkkkkkk",userAddress)
-    // // const userAddressLandmark = existingOrder.primaryAddressLandMark;
-    // if (
-    //     currentDate === date &&
-    //     (userAddressLandmark === addressLandMark)
-    //   ) {
-    //     throw new Error("An order already exists for the current address and date.");
-    //   }
+    }
+     
+    const user = existingOrder.userId;
+    
+    const date = existingOrder.date.toISOString().split("T")[0];
+    const orderedAddress = existingOrder.orderedAdress[0].addressLandMark;
+        console.log(orderedAddress)
+    let userAddressLandmark;
+    if (primaryAddressLandMark) {
+      userAddressLandmark = user.primaryAddressLandMark;
+    } else {
+      userAddressLandmark = user.secondaryAddressLandMark;
+    }
+    if (currentDate === date && userAddressLandmark === orderedAddress) {
+      throw new Error("Order is already exist on current date and addresslandmark");
+    }
+    return ;
   },
 };
