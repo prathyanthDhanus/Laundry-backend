@@ -49,6 +49,18 @@ const orderSchema = new mongoose.Schema({
   cancelledReason: {
     type: String,
   },
+  isPickedUp:{
+    type: Boolean,
+    default: false,
+  },
+  isAssigned: {
+    type: Boolean,
+    default: false,
+  },
+  isCompleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // orderSchema.virtual('formattedDate').get(function() {

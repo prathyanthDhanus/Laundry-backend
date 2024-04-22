@@ -33,8 +33,8 @@ module.exports = {
 
     if (!comparePassword) {
       throw new AppError(
-        "Field validation error:User already exist",
-        "User already exist",
+        "Field validation error:Admin already exist",
+        "Admin already exist",
         409
       );
     }

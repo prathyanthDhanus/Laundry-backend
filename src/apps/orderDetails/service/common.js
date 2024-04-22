@@ -5,15 +5,35 @@ module.exports = {
   //============= create an order ==============
 
   addOrderService: async (body, userId) => {
-    const { quantity, subCategoryId, primaryAddressLandMark,secondaryAddressLandMark,primaryAddress,secondaryAddress } =
-      body;
+    const {
+      quantity,
+      subCategoryId,
+      primaryAddressLandMark,
+      secondaryAddressLandMark,
+      primaryAddress,
+      secondaryAddress,
+    } = body;
+
+    //checking if the req address is primary or secondary
+    let landMark, address;
+    if (primaryAddress) {
+      landMark = primaryAddressLandMark;
+      address = primaryAddress;
+    } else {
+      landMark = secondaryAddressLandMark;
+      address = secondaryAddress;
+    }
     // Check if an order already exists for the user
-    const orderExist = await orderExisting(userId,primaryAddressLandMark);
+    const orderExist = await orderExisting(
+      userId,
+      primaryAddressLandMark,
+      landMark
+    );
     // If an order already exists, return the existing order
     if (orderExist) {
       return orderExist;
     }
-     
+
     const findSubCategory = await subcategory.findById({ _id: subCategoryId });
 
     if (!findSubCategory) {
@@ -21,20 +41,11 @@ module.exports = {
     }
     // Calculate total amount based on quantity and service charge
     const date = new Date().toISOString().split("T")[0];
-   
+
     const serviceCharge = findSubCategory.serviceCharge;
     const subCategoryName = findSubCategory.subCategoryName;
     const totalAmount = quantity * serviceCharge;
-
-    let landMark,address;
-    if(primaryAddress){
-      landMark = primaryAddressLandMark;
-      address = primaryAddress;
-    }else{
-      landMark = secondaryAddressLandMark;
-      address = secondaryAddress;
-    }
-
+    const grandTotalAmount = totalAmount
     // Save the order to the database
     const saveOrder = await addOrderDb(
       totalAmount,

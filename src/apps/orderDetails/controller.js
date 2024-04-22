@@ -1,17 +1,28 @@
 const {addOrderService} = require("../orderDetails/service/common");
-// const {orderExisting} = require("../orderDetails/service/db");
+const {getOrdersDb} = require("../orderDetails/service/db");
 
 module.exports = {
     addOrder :async(req,res)=>{
         const {body} = req;
         const userId = req.user?.userId;
-        const orders = await addOrderService(body,userId);
+        const findOrders = await addOrderService(body,userId);
 
         return res.status(200).json({
             status: "success",
             message: "Order placed successfully",
-            data: orders,
+            data: findOrders,
           });
     },
-    
+
+    getOrders : async(req,res)=>{
+        const userId = req.user?.userId;
+        const findOrders = await getOrdersDb(userId);
+
+        return res.status(200).json({
+            status: "success",
+            message: "Orders fetched successfully",
+            data: findOrders,
+          });
+    }
+
 }
