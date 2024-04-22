@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema({
     required: true,
     // default: Date.now,
   },
-  totalAmount: {
+  grandTotalAmount: {
     type: Number,
     required: true,
   },
@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema({
       type: String,
     required: true,
     },
-  
+   
   
   }],
   subcategory: [
@@ -40,6 +40,10 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      totalAmount: {
+        type: Number,
+        required: true,
+      },
     },
   ],
   isCancelled: {
@@ -48,6 +52,7 @@ const orderSchema = new mongoose.Schema({
   },
   cancelledReason: {
     type: String,
+    default:""
   },
   isPickedUp:{
     type: Boolean,

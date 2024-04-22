@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const AppError = require("../../../utils/appError");
 const adminModal = require("../model.js/adminSchema");
 const refreshTokenAdminModal = require("../../refreshToken/model/refreshTokenAdmin");
+const orderModel = require("../../orderDetails/model/orderSchema");
 const bcrypt = require("bcrypt");
 
 
@@ -82,4 +83,19 @@ module.exports = {
       throw new Error("Login failed");
     }
   },
+
+  //======================== get orders based on query ====================
+
+  getAllOrdersDb:async(query)=>{
+     const findOrders = await orderModel.find(query);
+
+     if(findOrders.length===0){
+      throw new AppError(
+        "Field validation error:Orders not found",
+        "Orders not found",
+        404
+      );
+     }
+     return findOrders
+  }
 };

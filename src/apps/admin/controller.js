@@ -1,4 +1,4 @@
-const { adminLoginDb, adminRegisterDb } = require("../admin/services/db");
+const { adminLoginDb, adminRegisterDb,getAllOrdersDb } = require("../admin/services/db");
 
 module.exports = {
   //================== admin register ====================
@@ -26,4 +26,19 @@ module.exports = {
       data: findAdmin,
     });
   },
+
+  //===================== get orders based on query ===================
+  
+    getAllOrders : async(req,res)=>{
+     const query = req.query;
+     const findOrders = await getAllOrdersDb(query);
+
+     return res.status(200).json({
+      status: "success",
+      message: "Orders fetched successfully",
+      data: findOrders,
+    });
+
+  }
+  
 };

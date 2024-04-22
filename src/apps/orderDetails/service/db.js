@@ -6,23 +6,30 @@ module.exports = {
   //================= create an order ===============
 
   addOrderDb: async (
-    totalAmount,
     userId,
-    subCategoryId,
-    subCategoryName,
-    quantity,
     date,
+    grandTotalAmount,
     landMark,
-    address
+    address,
+    subcategoryOrders
   ) => {
-    //saving the order to the server
+    const subcategories = subcategoryOrders.map(
+      ({ subCategoryId, subCategoryName, quantity, totalAmount }) => ({
+        subCategoryId,
+        subCategoryName,
+        quantity,
+        totalAmount,
+      })
+    );
+
     const order = new orderModel({
-      totalAmount,
       userId,
-      date: date,
-      orderedAdress: [{ addressLandMark: landMark, address: address }],
-      subcategory: [{ subCategoryId, subCategoryName, quantity }],
+      date,
+      grandTotalAmount,
+      orderedAdress: [{ addressLandMark: landMark, address }],
+      subcategory: subcategories,
     });
+
     return order.save();
   },
 
@@ -35,9 +42,9 @@ module.exports = {
       .findOne({
         userId: userId,
         // date: currentDate,
-        isPickedUp:false,
+        isPickedUp: false,
         "orderedAdress.addressLandMark": landMark,
-        isCancelled:false
+        isCancelled: false,
       })
       .populate("userId"); //populating the user using userId
 
@@ -47,7 +54,7 @@ module.exports = {
     // Extract user details from the existing order
     const user = existingOrder.userId;
     // Extract date and ordered address from the existing order
-    // const date = existingOrder.date.toISOString().split("T")[0];
+
     const checkPickedUp = existingOrder.isPickedUp;
     const orderedAddress = existingOrder.orderedAdress[0].addressLandMark;
     // Determine the user's address landmark based on primary/secondary
@@ -59,19 +66,17 @@ module.exports = {
     }
     // Check if an order already exists for the current date and address landmark
     if (checkPickedUp === false && userAddressLandmark === orderedAddress) {
-      throw new Error(
-        "Order is already exist on address"
-      );
+      throw new Error("Order is already exist on address");
     }
     return;
   },
 
   //================== get all orders ===================
 
-  getOrdersDb : async(userId)=>{
-    const findOrders = await orderModel.find({userId});
+  getOrdersDb: async (userId) => {
+    const findOrders = await orderModel.find({ userId });
 
-    if(findOrders.length===0){
+    if (findOrders.length === 0) {
       throw new AppError(
         "Field validation error:Orders not found",
         "Orders not found",
@@ -83,7 +88,24 @@ module.exports = {
 
   //================= cancel order =====================
 
-  cancelOrders : async(req,res)=>{
-    
-  }
+  cancelOrdersDb: async (orderId, cancelledReason) => {
+    const findOrders = await orderModel.findByIdAndUpdate(
+      orderId,
+      {
+        isCancelled: true,
+         cancelledReason:cancelledReason
+      },
+
+      { new: true }
+    );
+
+    if (!findOrders) {
+      throw new AppError(
+        "Field validation error:Orders not found",
+        "Orders not found",
+        404
+      );
+    }
+    return findOrders;
+  },
 };

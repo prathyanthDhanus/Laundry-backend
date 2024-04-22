@@ -2,12 +2,14 @@ const subcategory = require("../../subCategory/modal/subCategorySchema");
 const { addOrderDb, orderExisting } = require("../service/db");
 
 module.exports = {
+  
   //============= create an order ==============
 
   addOrderService: async (body, userId) => {
     const {
-      quantity,
-      subCategoryId,
+      // quantity,
+      // subCategoryId,
+      subcategories,
       primaryAddressLandMark,
       secondaryAddressLandMark,
       primaryAddress,
@@ -34,29 +36,47 @@ module.exports = {
       return orderExist;
     }
 
-    const findSubCategory = await subcategory.findById({ _id: subCategoryId });
-
-    if (!findSubCategory) {
-      throw new Error("something went wrong");
-    }
-    // Calculate total amount based on quantity and service charge
     const date = new Date().toISOString().split("T")[0];
+    const subcategoryOrders = [];
 
-    const serviceCharge = findSubCategory.serviceCharge;
-    const subCategoryName = findSubCategory.subCategoryName;
-    const totalAmount = quantity * serviceCharge;
-    const grandTotalAmount = totalAmount
+    for (const { subCategoryId, quantity } of subcategories) {
+      const findSubCategory = await subcategory.findById(subCategoryId);
+
+      if (!findSubCategory) {
+        throw new Error(`Subcategory with ID ${subCategoryId} not found`);
+      }
+
+      const serviceCharge = findSubCategory.serviceCharge;
+      const subCategoryName = findSubCategory.subCategoryName;
+      const totalAmount = quantity * serviceCharge;
+
+      // Push subcategory details into subcategoryOrders array
+      subcategoryOrders.push({
+        subCategoryId,
+        subCategoryName,
+        quantity,
+        totalAmount,
+      });
+    }
+
+    // Calculate grandTotalAmount as the sum of totalAmounts of all subcategories
+    const grandTotalAmount = subcategoryOrders.reduce(
+      (acc, curr) => acc + curr.totalAmount,
+      0
+    );
+
     // Save the order to the database
     const saveOrder = await addOrderDb(
-      totalAmount,
       userId,
-      subCategoryId,
-      subCategoryName,
-      quantity,
       date,
+      grandTotalAmount,
       landMark,
-      address
+      address,
+      subcategoryOrders
     );
+
     return saveOrder;
+
+    
   },
 };
