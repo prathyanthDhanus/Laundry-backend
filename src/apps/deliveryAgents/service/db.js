@@ -84,7 +84,7 @@ module.exports = {
 
   deliveryAgentLoginDb: async (deliveryAgentMail) => {
     const findDeliveryAgent = await deliveryAgentModel.findOne(
-      deliveryAgentMail
+      {deliveryAgentMail:deliveryAgentMail,isDeleted:false}
     );
     if (!findDeliveryAgent) {
       throw new AppError(
@@ -100,5 +100,6 @@ module.exports = {
     );
     return sendOtp;
   },
+  
   
 };

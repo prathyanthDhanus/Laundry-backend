@@ -6,6 +6,9 @@ const {
   deliveryAgentLoginDb
 } = require("./service/db");
 
+const {verifyotpLoginDb} = require("../user/services/db");
+const {tokenServiceDeliveryAgent} = require("./service/common");
+
 module.exports = {
   //================== updating a delivery agent by admin ===================
 
@@ -60,7 +63,7 @@ module.exports = {
     });
   },
 
-  //==================== delivery agent login =====================
+  //==================== delivery agent login using otp =====================
 
   deliveryAgentLogin:async(req,res)=>{
     const {deliveryAgentMail} = req.body;
@@ -68,8 +71,24 @@ module.exports = {
 
     return res.status(200).json({
         status: "success",
-        message: "Logged in successfully",
+        message: findDeliveryAgent.otpMessage,
         data: findDeliveryAgent,
       });
+  },
+
+  //==================== verify otp ========================
+
+  deliveryAgentOtp_Verify:async(req,res)=>{
+    const { userId, otp } = req.body;//userid means delivery agent id;
+    const checkOtp = await verifyotpLoginDb(userId,otp);
+    const token = await tokenServiceDeliveryAgent(checkOtp, userId);
+
+    return res.status(200).json({
+      status: "success",
+      message: "OTP validation success",
+      data: token,
+    });
   }
+
+  
 };

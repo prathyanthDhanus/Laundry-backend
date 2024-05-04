@@ -11,6 +11,9 @@ router.get("/profile",tryCatch(deliveryAgent.getDeliveryAgent));
 router.put("/profile",tokenVerifyAdmin,tryCatch(deliveryAgent.updateDeliveryAgent));
 router.delete("/profile",tokenVerifyAdmin,tryCatch(deliveryAgent.deleteDeliveryAgent));
 
+router.post("/login",tryCatch(deliveryAgent.deliveryAgentLogin));
+router.post("/verify-otp",tryCatch(deliveryAgent.deliveryAgentOtp_Verify));
+
 
 
 
