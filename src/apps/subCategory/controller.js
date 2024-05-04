@@ -23,7 +23,9 @@ module.exports = {
   //================== get all sub-category =================
 
   getAllSubCategory: async (req, res) => {
-    const findSubCategory = await getAllSubCategoryDb();
+      // If query parameters are provided, fetch data based on the query
+    const query = req.query;
+    const findSubCategory = await getAllSubCategoryDb(query);
 
     return res.status(200).json({
       status: "success",
@@ -36,6 +38,7 @@ module.exports = {
 
   updtaeSubCategory: async (req, res) => {
     const { body } = req;
+   
     const findSubCategory = await updtaeSubCategory(body);
 
     return res.status(200).json({
@@ -53,7 +56,7 @@ module.exports = {
 
     return res.status(200).json({
       status: "success",
-      message: "Sub_category updated successfully",
+      message: "Sub_category deleted successfully",
       data: findSubCategory,
     });
   },

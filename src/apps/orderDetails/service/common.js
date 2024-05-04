@@ -9,7 +9,9 @@ module.exports = {
     const {
       // quantity,
       // subCategoryId,
-      subcategories,
+      // subcategories,
+      
+      orderData,
       primaryAddressLandMark,
       secondaryAddressLandMark,
       primaryAddress,
@@ -39,23 +41,25 @@ module.exports = {
     const date = new Date().toISOString().split("T")[0];
     const subcategoryOrders = [];
 
-    for (const { subCategoryId, quantity } of subcategories) {
+    for (const { subCategoryId, quantity ,categoryName} of orderData) {
       const findSubCategory = await subcategory.findById(subCategoryId);
 
       if (!findSubCategory) {
         throw new Error(`Subcategory with ID ${subCategoryId} not found`);
       }
-
+   
       const serviceCharge = findSubCategory.serviceCharge;
       const subCategoryName = findSubCategory.subCategoryName;
       const totalAmount = quantity * serviceCharge;
-
+      
+      
       // Push subcategory details into subcategoryOrders array
       subcategoryOrders.push({
         subCategoryId,
         subCategoryName,
         quantity,
         totalAmount,
+        categoryName
       });
     }
 

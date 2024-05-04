@@ -14,11 +14,12 @@ module.exports = {
     subcategoryOrders
   ) => {
     const subcategories = subcategoryOrders.map(
-      ({ subCategoryId, subCategoryName, quantity, totalAmount }) => ({
+      ({ subCategoryId, subCategoryName, quantity, totalAmount,categoryName }) => ({
         subCategoryId,
         subCategoryName,
         quantity,
         totalAmount,
+        categoryName
       })
     );
 
@@ -37,7 +38,7 @@ module.exports = {
 
   orderExisting: async (userId, primaryAddressLandMark, landMark) => {
     const currentDate = new Date().toISOString().split("T")[0];
-    // Find the order based on userId, current date, and landmark
+    // Find the order based on userId and landmark
     const existingOrder = await orderModel
       .findOne({
         userId: userId,
@@ -72,18 +73,71 @@ module.exports = {
   },
 
   //================== get all orders ===================
-
-  getOrdersDb: async (userId) => {
-    const findOrders = await orderModel.find({ userId });
-
-    if (findOrders.length === 0) {
-      throw new AppError(
-        "Field validation error:Orders not found",
-        "Orders not found",
-        404
-      );
+  
+  getOrdersDb: async (
+    userId,
+    isCancelled,
+    isCompleted,
+    isPickedUp,
+    filterPending,
+    skip,
+    limit,
+    
+  ) => {
+    // Construct query based on provided filters
+    let query = { userId };
+    if (isCancelled !== undefined) query.isCancelled = isCancelled;
+    if (isCompleted !== undefined) query.isCompleted = isCompleted;
+    // if (isPickedUp !== undefined) query.isPickedUp = isPickedUp ;
+    if (isPickedUp) {
+      query.isPickedUp = true;
+      query.isCompleted = false; 
     }
+    if(filterPending){
+      query.isPickedUp = false;
+      query.isCompleted = false; 
+      query.isCancelled = false; 
+    }
+    
+    
+    // Query orders with the constructed query, applying pagination
+    const findOrders = await orderModel.find(query).skip(skip).limit(limit).populate('subcategory');
+    
+     
+
+    // Return the fetched orders
     return findOrders;
+  },
+
+  //==============  Function to get total count of orders for a user ===============
+
+  getTotalOrdersDb: async (userId) => {
+    // Count documents in the order model matching the provided user ID
+    const totalOrders = await orderModel.countDocuments({ userId });
+
+    // Return the total count of orders
+    return totalOrders;
+  },
+
+  //===========  Function to get total count of orders with provided filters =============
+
+  getTotalOrdersWithFiltersDb: async (
+    userId,
+    isCancelled,
+    isCompleted,
+    isPickedUp
+  ) => {
+    // Construct query based on provided filters
+    let query = { userId };
+    if (isCancelled !== undefined) query.isCancelled = isCancelled;
+    if (isCompleted !== undefined) query.isCompleted = isCompleted;
+    if (isPickedUp !== undefined) query.isPickedUp = isPickedUp;
+
+    // Count documents in the order model matching the constructed query
+    const totalOrders = await orderModel.countDocuments(query);
+
+    // Return the total count of orders with filters applied
+    return totalOrders;
   },
 
   //================= cancel order =====================
@@ -93,7 +147,7 @@ module.exports = {
       orderId,
       {
         isCancelled: true,
-         cancelledReason:cancelledReason
+        cancelledReason: cancelledReason,
       },
 
       { new: true }
@@ -108,4 +162,41 @@ module.exports = {
     }
     return findOrders;
   },
+
+ //===================== get a order =======================
+
+  getAorderDb:async(orderId)=>{
+    
+    const findOrders = await orderModel.find(orderId);
+   
+    if(findOrders.length===0){
+      throw new AppError(
+        "Field validation error:Orders not found",
+        "Orders not found",
+        404
+      );
+    }
+    return findOrders;
+  },
+
+  //===================== get full orders of a user ===============
+
+  getFullOrderofUserDb: async(userId,page = 1, perPage = 10)=>{
+    const skip = (page - 1) * perPage;
+    // const findOrders = await orderModel.find({userId});
+
+    const findOrders = await orderModel
+    .find({ userId })
+    .skip(skip)
+    .limit(perPage);
+       
+    if(findOrders.length===0){
+      throw new AppError(
+        "Field validation error:Orders not found",
+        "Orders not found",
+        404
+      );
+    }
+    return findOrders;
+  }
 };

@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  primaryAddressPincode:{
+    type: Number,
+    default: "",
+  },
   secondaryAddress: {
     type: String,
     default: "",

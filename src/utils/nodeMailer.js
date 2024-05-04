@@ -22,7 +22,7 @@ module.exports={
         const info = await transporter.sendMail({
             from: process.env.EMAIL,
             to: email,
-            subject: `OTP  for Software Campus Registration`,
+            subject: `OTP  for Laundry app verification`,
             html: `<h4>Dear ${name},</h4>
             <p>This is to acknowledge the details of your login. Login has been processed successfully.</p>
             
@@ -31,9 +31,9 @@ module.exports={
               
             </ul>
             <p>OTP will Expire in <strong> 5 minutes</strong></p>
-            <p>Thank you for your login. If you have any queries, contact the Software Campus info team.</p>
+            <p>Thank you for your login. If you have any queries, contact the Laundry info team.</p>
             <p>Best regards,</p>
-            <h4>Software Campus</h4>
+            <h4>Laundry</h4>
             `,
             
             headers: { 'x-myheader': 'test header' }

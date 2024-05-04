@@ -47,7 +47,7 @@ module.exports = {
       { _id: categoryId },
       { isDeleted: false }
     );
-    console.log(findCategory)
+    // console.log(categoryName)
     if (findCategory.length === 0) {
       throw new AppError(
         "Field validation error:Category not found",
@@ -61,7 +61,7 @@ module.exports = {
       { categoryName: categoryName },
       { new: true }
     );
-
+  // console.log(updateCategory)
     return updateCategory;
   },
 

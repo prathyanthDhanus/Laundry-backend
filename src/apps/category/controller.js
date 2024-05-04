@@ -36,7 +36,9 @@ module.exports = {
 
   updateCategory: async (req, res) => {
     const { categoryId } = req.query;
-    const { categoryName } = req.body;
+    // const { categoryName } = req.body;
+   const categoryName = req.body[0].categoryName;
+  
     const findCategory = await updateCategoryDb(categoryId, categoryName);
 
     return res.status(200).json({

@@ -25,6 +25,7 @@ module.exports = {
       const token = jwt.sign(
         {
           userId: userId,
+          role:"user"
         },
         secret,
         { expiresIn: "1h" }
@@ -33,6 +34,7 @@ module.exports = {
       const refreshToken = jwt.sign(
         {
           userId: userId,
+          role:"user",
           date: Date.now(),
         },
         secret,

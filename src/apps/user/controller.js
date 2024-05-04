@@ -32,6 +32,7 @@ module.exports = {
 
   userlogin: async (req, res) => {
     const { email, password } = req.body;
+    console.log(email,password)
     const findUser = await userLoginDB(email);
     const userData = await userLoginService(findUser, password);
 

@@ -4,8 +4,8 @@ module.exports = {
   //================== admin register ====================
 
   adminRegister: async (req, res) => {
-    const { userName, password } = req.body;
-    const findAdmin = await adminRegisterDb(userName, password);
+    const { userName, password ,adminKeyId } = req.body;
+    const findAdmin = await adminRegisterDb(userName, password ,adminKeyId);
 
     return res.status(200).json({
       status: "success",
@@ -17,9 +17,9 @@ module.exports = {
   //====================== admin login =====================
 
   adminLogin: async (req, res) => {
-    const { userName, password, adminId } = req.body;
-    const findAdmin = await adminLoginDb(userName, password, adminId);
-
+    const { userName, password } = req.body;
+    const findAdmin = await adminLoginDb(userName, password);
+    
     return res.status(200).json({
       status: "success",
       message: "Admin loggedin successfully",

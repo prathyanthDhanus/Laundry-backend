@@ -11,8 +11,9 @@ module.exports = {
 
     //================= admin register ===================
 
-  adminRegisterDb: async (userName, password) => {
+  adminRegisterDb: async (userName, password,adminKeyId) => {
     const findAdmin = await adminModal.findOne({ userName: userName });
+    
     if (findAdmin) {
       throw new AppError(
         "Field validation error:Admin already exist,choose another username for admin",
@@ -20,16 +21,30 @@ module.exports = {
         409
       );
     }
-    const hashedPassword = await bcrypt.hash(password,10);
-    const createAdmin = new adminModal({userName:userName,password:hashedPassword})
-    await createAdmin.save();
+
+    const adminScreteKey = process.env.ADMINSECRET_KEY_REGISTER;
+    if(adminScreteKey===adminKeyId){
+      const hashedPassword = await bcrypt.hash(password,10);
+      const createAdmin = new adminModal({userName:userName,password:hashedPassword})
+      await createAdmin.save();
+    }else{
+      throw new AppError(
+        "Field validation error:Unauthorized",
+        "Unauthorized entry",
+        401
+      );
+    }
+
+ 
+   
   },
 
   //===================== admin login ====================
 
-  adminLoginDb: async (userName, password,adminId) => {
+  adminLoginDb: async (userName, password) => {
     
     const findAdmin = await adminModal.findOne({userName:userName});
+    const adminId = findAdmin?._id;
     const comparePassword = await bcrypt.compare(password, findAdmin?.password);
 
     if (!comparePassword) {
@@ -44,6 +59,7 @@ module.exports = {
     const token = jwt.sign(
       {
         adminId: adminId,
+        role:"admin"
       },
       adminsecretkey,
       { expiresIn: "1h" }
@@ -52,7 +68,8 @@ module.exports = {
     const refreshToken = jwt.sign(
       {
         adminId: adminId,
-        date: Date.now(),
+        role:"admin",
+        date: Date.now()
       },
       adminsecretkey,
       { expiresIn: "7d" }

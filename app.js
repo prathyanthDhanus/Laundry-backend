@@ -17,7 +17,7 @@ const userRoute = require("./src/apps/user/route")
 app.use("/api/user",userRoute);
 
 const refreshToken = require("./src/apps/refreshToken/route")
-app.use("/api/admin",refreshToken);
+app.use("/api/auth",refreshToken);
 
 const adminRoute = require("./src/apps/admin/route")
 app.use("/api/admin",adminRoute);
@@ -29,7 +29,10 @@ const subCategory = require("./src/apps/subCategory/route")
 app.use("/api/admin",subCategory);
 
 const order = require("./src/apps/orderDetails/route")
-app.use("/api/user",order)
+app.use("/api/user",order);
+
+const deliveryAgent = require("./src/apps/deliveryAgents/route")
+app.use("/api/delivery-agent",deliveryAgent)
 
 //mongodb connection setup
 mongoose.connect(url)
