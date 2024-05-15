@@ -58,7 +58,7 @@ module.exports = {
         400
       );
     }
-
+    
     const otpData = findUser[0]?.otp;
     if (otpData !== numOtp) {
       throw new AppError(

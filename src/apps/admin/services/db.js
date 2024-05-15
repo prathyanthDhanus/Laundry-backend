@@ -5,15 +5,12 @@ const refreshTokenAdminModal = require("../../refreshToken/model/refreshTokenAdm
 const orderModel = require("../../orderDetails/model/orderSchema");
 const bcrypt = require("bcrypt");
 
-
-
 module.exports = {
+  //================= admin register ===================
 
-    //================= admin register ===================
-
-  adminRegisterDb: async (userName, password,adminKeyId) => {
+  adminRegisterDb: async (userName, password, adminKeyId) => {
     const findAdmin = await adminModal.findOne({ userName: userName });
-    
+
     if (findAdmin) {
       throw new AppError(
         "Field validation error:Admin already exist,choose another username for admin",
@@ -23,27 +20,26 @@ module.exports = {
     }
 
     const adminScreteKey = process.env.ADMINSECRET_KEY_REGISTER;
-    if(adminScreteKey===adminKeyId){
-      const hashedPassword = await bcrypt.hash(password,10);
-      const createAdmin = new adminModal({userName:userName,password:hashedPassword})
+    if (adminScreteKey === adminKeyId) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const createAdmin = new adminModal({
+        userName: userName,
+        password: hashedPassword,
+      });
       await createAdmin.save();
-    }else{
+    } else {
       throw new AppError(
         "Field validation error:Unauthorized",
         "Unauthorized entry",
         401
       );
     }
-
- 
-   
   },
 
   //===================== admin login ====================
 
   adminLoginDb: async (userName, password) => {
-    
-    const findAdmin = await adminModal.findOne({userName:userName});
+    const findAdmin = await adminModal.findOne({ userName: userName });
     const adminId = findAdmin?._id;
     const comparePassword = await bcrypt.compare(password, findAdmin?.password);
 
@@ -59,7 +55,7 @@ module.exports = {
     const token = jwt.sign(
       {
         adminId: adminId,
-        role:"admin"
+        role: "admin",
       },
       adminsecretkey,
       { expiresIn: "1h" }
@@ -68,8 +64,8 @@ module.exports = {
     const refreshToken = jwt.sign(
       {
         adminId: adminId,
-        role:"admin",
-        date: Date.now()
+        role: "admin",
+        date: Date.now(),
       },
       adminsecretkey,
       { expiresIn: "7d" }
@@ -103,16 +99,66 @@ module.exports = {
 
   //======================== get orders based on query ====================
 
-  getAllOrdersDb:async(query)=>{
-     const findOrders = await orderModel.find(query);
+  // getAllOrdersDb:async(query)=>{
+  //    const findOrders = await orderModel.find(query);
 
-     if(findOrders.length===0){
+  //    if(findOrders.length===0){
+  //     throw new AppError(
+  //       "Field validation error:Orders not found",
+  //       "Orders not found",
+  //       404
+  //     );
+  //    }
+  //    return findOrders
+  // },
+
+  //=================== get orders for admin =====================
+
+  getOrdersForAdminDb: async (fromDate, toDate, query) => {
+    // const findOrdersOnDate = await orderModel.find({
+    //   date: { $gte: fromDate, $lte: toDate },...query,
+    // });
+
+    // console.log(fromDate,toDate)
+
+    const filter = { ...query }; // Spread the query object to include other filters
+    if (fromDate && toDate) {
+      // Check if fromDate and toDate are provided
+
+      filter.date = { $gte: fromDate, $lte: toDate };
+      delete filter.fromDate; // Remove fromDate from the filter object
+      delete filter.toDate; // Add date range filter if provided
+    }
+    // console.log(filter)
+
+    const findOrdersOnDate = await orderModel.find(filter).populate("userId");
+
+    if (findOrdersOnDate.length === 0) {
       throw new AppError(
         "Field validation error:Orders not found",
         "Orders not found",
         404
       );
-     }
-     return findOrders
-  }
+    }
+    return findOrdersOnDate;
+  },
+
+  //============================ assign orders to delivery agent =======================
+
+  assignOrdersToDeliveryAgentDb: async (deliveryAgentId, orderId) => {
+    const findOrders = await orderModel.findByIdAndUpdate(orderId, {
+      isAssigned: true,
+      deliveryAgentId: deliveryAgentId,
+    });
+
+    if (!findOrders) {
+      throw new AppError(
+        "Field validation error:Orders not found",
+        "Orders not found",
+        404
+      );
+    }
+
+    return findOrders
+  },
 };

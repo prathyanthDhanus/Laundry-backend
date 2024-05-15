@@ -14,12 +14,18 @@ module.exports = {
     subcategoryOrders
   ) => {
     const subcategories = subcategoryOrders.map(
-      ({ subCategoryId, subCategoryName, quantity, totalAmount,categoryName }) => ({
+      ({
         subCategoryId,
         subCategoryName,
         quantity,
         totalAmount,
-        categoryName
+        categoryName,
+      }) => ({
+        subCategoryId,
+        subCategoryName,
+        quantity,
+        totalAmount,
+        categoryName,
       })
     );
 
@@ -73,7 +79,7 @@ module.exports = {
   },
 
   //================== get all orders ===================
-  
+
   getOrdersDb: async (
     userId,
     isCancelled,
@@ -81,8 +87,7 @@ module.exports = {
     isPickedUp,
     filterPending,
     skip,
-    limit,
-    
+    limit
   ) => {
     // Construct query based on provided filters
     let query = { userId };
@@ -91,19 +96,20 @@ module.exports = {
     // if (isPickedUp !== undefined) query.isPickedUp = isPickedUp ;
     if (isPickedUp) {
       query.isPickedUp = true;
-      query.isCompleted = false; 
+      query.isCompleted = false;
     }
-    if(filterPending){
+    if (filterPending) {
       query.isPickedUp = false;
-      query.isCompleted = false; 
-      query.isCancelled = false; 
+      query.isCompleted = false;
+      query.isCancelled = false;
     }
-    
-    
+
     // Query orders with the constructed query, applying pagination
-    const findOrders = await orderModel.find(query).skip(skip).limit(limit).populate('subcategory');
-    
-     
+    const findOrders = await orderModel
+      .find(query)
+      .skip(skip)
+      .limit(limit)
+      .populate("subcategory");
 
     // Return the fetched orders
     return findOrders;
@@ -163,13 +169,13 @@ module.exports = {
     return findOrders;
   },
 
- //===================== get a order =======================
+  //===================== get a order =======================
 
-  getAorderDb:async(orderId)=>{
-    
-    const findOrders = await orderModel.find(orderId);
-   
-    if(findOrders.length===0){
+  getAorderDb: async (orderId) => {
+    // const findOrders = await orderModel.find({_id:orderId});
+    const findOrders = await orderModel.findById(orderId, "subcategory");
+
+    if (findOrders.length === 0) {
       throw new AppError(
         "Field validation error:Orders not found",
         "Orders not found",
@@ -181,16 +187,16 @@ module.exports = {
 
   //===================== get full orders of a user ===============
 
-  getFullOrderofUserDb: async(userId,page = 1, perPage = 10)=>{
+  getFullOrderofUserDb: async (userId, page = 1, perPage = 10) => {
     const skip = (page - 1) * perPage;
     // const findOrders = await orderModel.find({userId});
 
     const findOrders = await orderModel
-    .find({ userId })
-    .skip(skip)
-    .limit(perPage);
-       
-    if(findOrders.length===0){
+      .find({ userId })
+      .skip(skip)
+      .limit(perPage);
+
+    if (findOrders.length === 0) {
       throw new AppError(
         "Field validation error:Orders not found",
         "Orders not found",
@@ -198,5 +204,7 @@ module.exports = {
       );
     }
     return findOrders;
-  }
+  },
+
+ 
 };

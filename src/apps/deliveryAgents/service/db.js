@@ -1,6 +1,7 @@
 const deliveryAgentModel = require("../model/deliveryAgentSchema");
 const AppError = require("../../../utils/appError");
 const { sendOtpAndSave } = require("../../otp/sendOtp");
+const orderModel = require("../../orderDetails/model/orderSchema");
 
 module.exports = {
   //================== creating a delivery agent by admin ===================
@@ -10,6 +11,7 @@ module.exports = {
     const findDeliveryAgent = await deliveryAgentModel.findOne({
       deliveryAgentMail: deliveryAgentMail,
     });
+    // console.log(findDeliveryAgent)
 
     if (findDeliveryAgent) {
       throw new AppError(
@@ -83,9 +85,11 @@ module.exports = {
   //==================== delivery agent login =====================
 
   deliveryAgentLoginDb: async (deliveryAgentMail) => {
-    const findDeliveryAgent = await deliveryAgentModel.findOne(
-      {deliveryAgentMail:deliveryAgentMail,isDeleted:false}
-    );
+    const findDeliveryAgent = await deliveryAgentModel.findOne({
+      deliveryAgentMail: deliveryAgentMail,
+      isDeleted: false,
+    });
+
     if (!findDeliveryAgent) {
       throw new AppError(
         "Field validation error:Mail id not found",
@@ -100,6 +104,24 @@ module.exports = {
     );
     return sendOtp;
   },
+
+  //========================= get asssigned orders ==========================
   
-  
+  assignedOrdersDeliveryAgentDb: async (deliveryAgentId, query) => {
+
+    //query based on assigned true or false
+    const findOrders = await orderModel.find({
+      deliveryAgentId: deliveryAgentId,
+      ...query,
+    });
+
+    if (findOrders.length === 0) {
+      throw new AppError(
+        "Field validation error:Orders not found",
+        "Orders not found",
+        404
+      );
+    }
+    return findOrders;
+  },
 };

@@ -5,7 +5,7 @@ const deliveryAgentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  deliveryAgentNameAddress: {
+  deliveryAgentAddress: {
     type:String,
     required:true,
   },
@@ -21,10 +21,10 @@ const deliveryAgentSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  jobDetails:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "orderDetails",
-  }
+  // jobDetails:{
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "orderDetails",
+  // }
 
 });
 

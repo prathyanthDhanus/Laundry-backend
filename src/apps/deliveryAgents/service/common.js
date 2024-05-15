@@ -4,7 +4,7 @@ const refreshTokenUserModel = require("../../refreshToken/model/refreshTokenDeli
 module.exports={
     tokenServiceDeliveryAgent:async(checkOtp, deliveryAgentId)=>{
         if (checkOtp === true) {
-            const secret = process.env.USERSECRET_KEY;
+            const secret = process.env.DELIVERY_AGENTSECRET_KEY;
             const token = jwt.sign(
               {
                 deliveryAgentId: deliveryAgentId,
