@@ -9,6 +9,9 @@ router
       .post("/register",tryCatch(admin.adminRegister))
       .post("/login",tryCatch(admin.adminLogin))
       .post("/assign/orders",tokenVerifyAdmin,tryCatch(admin.assignOrdersToDeliveryAgent))
+     
+      .put("/orders",tokenVerifyAdmin,tryCatch(admin.outForDeliveryStatus))
+      
       .get("/orders",tokenVerifyAdmin,tryCatch(admin.getOrdersForAdmin))
       
 

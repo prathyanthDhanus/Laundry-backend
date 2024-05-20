@@ -131,7 +131,7 @@ module.exports = {
     }
     // console.log(filter)
 
-    const findOrdersOnDate = await orderModel.find(filter).populate("userId");
+    const findOrdersOnDate = await orderModel.find(filter).populate("userId").populate("deliveryAgentId");
 
     if (findOrdersOnDate.length === 0) {
       throw new AppError(
@@ -159,6 +159,25 @@ module.exports = {
       );
     }
 
-    return findOrders
+    return findOrders;
+  },
+
+  //================ update the order status outFor delivery =================
+
+  outForDeliveryStatusDb: async (checkStatus, orderId) => {
+    const findOrders = await orderModel.findByIdAndUpdate(
+      orderId,
+      { outForDelivery: checkStatus },
+      { new: true }
+    );
+
+    if (!findOrders) {
+      throw new AppError(
+        "Field validation error:Orders not found",
+        "Orders not found",
+        404
+      );
+    }
+    return findOrders;
   },
 };

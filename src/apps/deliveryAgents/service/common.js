@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const refreshTokenUserModel = require("../../refreshToken/model/refreshTokenDeliveryAgent");
+const refreshTokenDeliveryAgentModel = require("../../refreshToken/model/refreshTokenDeliveryAgent");
 
 module.exports={
     tokenServiceDeliveryAgent:async(checkOtp, deliveryAgentId)=>{
@@ -25,12 +25,12 @@ module.exports={
             );
       
             if (token && refreshToken) {
-              const existingRefreshToken = await refreshTokenUserModel.findOne({
+              const existingRefreshToken = await refreshTokenDeliveryAgentModel.findOne({
                 deliveryAgentId: deliveryAgentId,
               });
       
               if (existingRefreshToken) {
-                await refreshTokenUserModel.findByIdAndUpdate(
+                await refreshTokenDeliveryAgentModel.findByIdAndUpdate(
                   existingRefreshToken?._id,
                   {
                     token: refreshToken,
@@ -38,7 +38,7 @@ module.exports={
                 );
                 return token;
               } else {
-                const createRefreshToken = new refreshTokenUserModel({
+                const createRefreshToken = new refreshTokenDeliveryAgentModel({
                   token: refreshToken,
                   deliveryAgentId: deliveryAgentId,
                 });

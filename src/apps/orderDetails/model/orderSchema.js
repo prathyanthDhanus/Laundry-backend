@@ -70,7 +70,7 @@ const orderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "deliveryAgent",
   },
-  outOfDelivery: {
+  outForDelivery: {
     type: Boolean,
     default: false,
   },
@@ -78,6 +78,10 @@ const orderSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isPaid : {
+    type: Boolean,
+    default: false,
+  }
 });
 
 

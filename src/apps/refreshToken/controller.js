@@ -1,8 +1,12 @@
 const jwt = require("jsonwebtoken");
 const refreshTokenModel = require("./model/refreshTokenUser");
 const refreshTokenAdminModel = require("./model/refreshTokenAdmin");
+const refreshTokenDeliveryAgentModel = require("./model/refreshTokenDeliveryAgent")
 
 module.exports = {
+
+  //=========================== user refresh token ==============================
+
   refreshTokenUser: async (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -67,6 +71,8 @@ module.exports = {
     }
   },
 
+  //========================== admin refresh token ============================
+
   refreshTokenAdmin:async(req,res)=>{
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -130,6 +136,8 @@ module.exports = {
 
   },
 
+  //========================== delivery agent refresh token ==========================
+
   refreshTokenDeliveryAgent:async(req,res)=>{
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -137,9 +145,9 @@ module.exports = {
     }
 
     const token = authHeader?.split(" ")[1];
-    const admin = jwt.decode(token);
-    const existingRefreshToken = await refreshTokenAdminModel.findOne({
-      adminId: admin?.adminId,
+    const delivery_agent = jwt.decode(token);
+    const existingRefreshToken = await refreshTokenDeliveryAgentModel.findOne({
+      deliveryAgentId: delivery_agent?.deliveryAgentId,
     });
 
     if (existingRefreshToken) {
@@ -163,7 +171,7 @@ module.exports = {
                     }
                     );
 
-            await refreshTokenAdminModel.findByIdAndUpdate(
+            await refreshTokenDeliveryAgentModel.findByIdAndUpdate(
               existingRefreshToken?._id,
               { token: refreshToken }
             );

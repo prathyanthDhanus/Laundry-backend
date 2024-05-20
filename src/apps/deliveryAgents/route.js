@@ -15,7 +15,11 @@ router.delete("/profile",tokenVerifyAdmin,tryCatch(deliveryAgent.deleteDeliveryA
 
 router.post("/login",tryCatch(deliveryAgent.deliveryAgentLogin));
 router.post("/verify-otp",tryCatch(deliveryAgent.deliveryAgentOtp_Verify));
+
+router.post("/orders",tokenVerifyDeliveryAgent,tryCatch(deliveryAgent.checkPaymentIsDone));
+router.put("/otp-verify/orders",tokenVerifyDeliveryAgent,tryCatch(deliveryAgent.updateIsCompletedField));
 router.get("/orders",tokenVerifyDeliveryAgent,tryCatch(deliveryAgent.assignedOrdersDeliveryAgent));
+router.put("/orders",tokenVerifyDeliveryAgent,tryCatch(deliveryAgent.updateIsPickedUp));
 
 
 

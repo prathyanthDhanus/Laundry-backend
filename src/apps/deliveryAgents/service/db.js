@@ -106,14 +106,15 @@ module.exports = {
   },
 
   //========================= get asssigned orders ==========================
-  
-  assignedOrdersDeliveryAgentDb: async (deliveryAgentId, query) => {
 
+  assignedOrdersDeliveryAgentDb: async (deliveryAgentId, query) => {
     //query based on assigned true or false
-    const findOrders = await orderModel.find({
-      deliveryAgentId: deliveryAgentId,
-      ...query,
-    });
+    const findOrders = await orderModel
+      .find({
+        deliveryAgentId: deliveryAgentId,
+        ...query,
+      })
+      .populate("userId");
 
     if (findOrders.length === 0) {
       throw new AppError(
@@ -123,5 +124,73 @@ module.exports = {
       );
     }
     return findOrders;
+  },
+
+  //===================== update isPickedUp status ====================
+
+  updateIsPickedUp: async (isPickedUp, orderId) => {
+    console.log(orderId, isPickedUp);
+    const findOrders = await orderModel.findByIdAndUpdate(
+      orderId,
+      { isPickedUp: isPickedUp },
+      { new: true }
+    );
+
+    if (!findOrders) {
+      throw new AppError(
+        "Field validation error:Orders not found",
+        "Orders not found",
+        404
+      );
+    }
+    return findOrders;
+  },
+
+  //=================== checking payment is done before the isCompleted field update  ====================
+
+  checkPaymentIsDoneDb: async (orderId) => {
+    const findOrders = await orderModel
+      .find({ _id: orderId, isPaid: true })
+      .populate("userId");
+    if (!findOrders) {
+      throw new AppError(
+        "Field validation error:Payment not completed",
+        "Payment not completed",
+        102
+      );
+    }
+    // console.log(findOrders)
+
+    const userInfo = findOrders[0]?.userId;
+
+
+    //if isPaid is true generating otp here
+    const sendOtp = await sendOtpAndSave(
+      userInfo?.email,
+      userInfo?._id,
+      userInfo?.userName
+    );
+    return sendOtp;
+  },
+
+  //=========================== update the isCompleted status =========================
+
+  updateIsCompletedFieldDb: async (checkOtp, orderId) => {
+    if (checkOtp === true) {
+      const findOrder = await orderModel.findByIdAndUpdate(
+        orderId,
+        { isCompleted: true },
+        { new: true }
+      );
+
+      if (!findOrder) {
+        throw new AppError(
+          "Field validation error:Orders not found",
+          "Orders not found",
+          404
+        );
+      }
+      return findOrder;
+    }
   },
 };

@@ -3,7 +3,10 @@ const {
   adminRegisterDb,
   getOrdersForAdminDb,
   assignOrdersToDeliveryAgentDb,
+  outForDeliveryStatusDb,
 } = require("../admin/services/db");
+
+const { outForDeliveryStatusService } = require("./services/common");
 
 module.exports = {
   //================== admin register ====================
@@ -54,6 +57,7 @@ module.exports = {
 
     const { fromDate, toDate } = req.query; // Retrieve fromDate and toDate from query parameters
     const query = req.query;
+
     const findOrders = await getOrdersForAdminDb(fromDate, toDate, query);
 
     return res.status(200).json({
@@ -79,5 +83,18 @@ module.exports = {
     });
   },
 
-  //
+  //====================== update the order status outFor delivery ==========================
+
+  outForDeliveryStatus: async (req, res) => {
+    const { outForDelivery, orderId } = req.body;
+    
+    const checkStatus = await outForDeliveryStatusService(outForDelivery);
+    const findOrders = await outForDeliveryStatusDb(checkStatus, orderId);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Orders status updated successfully",
+      data: findOrders,
+    });
+  },
 };

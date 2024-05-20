@@ -5,6 +5,9 @@ const {
   deleteDeliveryAgentDb,
   deliveryAgentLoginDb,
   assignedOrdersDeliveryAgentDb,
+  updateIsPickedUp,
+  checkPaymentIsDoneDb,
+  updateIsCompletedFieldDb
 } = require("./service/db");
 
 const { verifyotpLoginDb } = require("../user/services/db");
@@ -92,12 +95,13 @@ module.exports = {
     });
   },
 
-  //=============== get assigned orders ====================
+  //=================== get assigned orders ====================
 
   assignedOrdersDeliveryAgent: async (req, res) => {
     //extracting delivery agent id from the token
     const deliveryAgentId = req?.delivery_agent?.deliveryAgentId;
     const query = req.query;
+    console.log(query);
     const findOrders = await assignedOrdersDeliveryAgentDb(
       deliveryAgentId,
       query
@@ -109,4 +113,47 @@ module.exports = {
       data: findOrders,
     });
   },
+
+  //==================== update the isPickedUp status =====================
+
+  updateIsPickedUp: async (req, res) => {
+    const { isPickedUp, orderId } = req.body;
+    const findOrders = await updateIsPickedUp(isPickedUp, orderId);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Status updated successfully",
+      data: findOrders,
+    });
+  },
+
+  //=================== checking payment is done before the isCompleted field update  ====================
+
+  checkPaymentIsDone: async (req,res) => {
+    const { orderId } = req.body;
+    //first checking the order is existing or not
+    const findOrders = await checkPaymentIsDoneDb(orderId);
+ 
+    return res.status(200).json({
+      status: "success",
+      message: "Status updated successfully",
+      data: findOrders,
+    });
+  },
+
+  //================== verifing the otp and updating the isCompleted field =========================
+
+  updateIsCompletedField : async(req,res)=>{
+    //passing userId from frontend
+    const {userId,otp,orderId} = req.body;
+    const checkOtp = await verifyotpLoginDb(userId, otp);
+    const findOrders = await updateIsCompletedFieldDb(checkOtp,orderId);
+    
+    return res.status(200).json({
+      status: "success",
+      message: "Status updated successfully",
+      data: findOrders,
+    });
+  }
+
 };

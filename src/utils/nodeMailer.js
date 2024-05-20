@@ -20,7 +20,8 @@ module.exports={
         })
 
         const info = await transporter.sendMail({
-            from: process.env.EMAIL,
+            // from: process.env.EMAIL,
+            from: process.env.APP_EMAIL,
             to: email,
             subject: `OTP  for Laundry app verification`,
             html: `<h4>Dear ${name},</h4>
