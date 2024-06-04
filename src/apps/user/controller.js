@@ -1,8 +1,9 @@
 const {
-  passwordHashService,
+  
   userLoginService,
   sendOtpService,
   tokenServiceUser,
+  userPaymentService
 } = require("./services/common");
 const {
   userLoginDB,
@@ -10,7 +11,8 @@ const {
   userRegisterDB,
   createNewPasswordDb,
   adduserProfileDb,
-  getUserProfileDb
+  getUserProfileDb,
+  userPaymentDb
 } = require("./services/db");
 
 module.exports = {
@@ -125,6 +127,21 @@ module.exports = {
       data: findUser,
     });
   },
+
+  //=================== payment section ================
+
+  userPayment  : async(req,res)=>{
+
+    const {orderId} = req.body;
+     console.log("kooooi")
+    const findOrder = await userPaymentDb(orderId);
+    const payment = await userPaymentService(findOrder);
+    return res.status(200).json({
+      status: "success",
+      message: "Order fetched successfully",
+      data: payment,
+    });
+  }
 
   
 };

@@ -3,11 +3,46 @@ const jwt = require("jsonwebtoken");
 const refreshTokenUserModel = require("../../../apps/refreshToken/model/refreshTokenUser");
 const { userRegisterDB, sendOtpDB } = require("./db");
 const { sendOtpAndSave } = require("../../otp/sendOtp");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 module.exports = {
+
+  //================== user payment details =====================
+
+ userPaymentService : async(totalAmount)=>{
+
+  let metadata = "thank you for purchasing from us, see you soon";
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price_data: {
+          currency: 'inr',
+          product_data: {
+            name: 'Sample Product',
+            description: 'Laundry Service',
+            images:['https://static.vecteezy.com/system/resources/previews/026/721/193/original/washing-machine-and-laundry-laundry-sticker-png.png'],
+          },
+          unit_amount: totalAmount * 100, // amount in rupees
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: 'https://ruperhat.com/wp-content/uploads/2020/06/Paymentsuccessful21.png',
+    cancel_url: 'https://media.licdn.com/dms/image/C5112AQGiR7AdalYNjg/article-cover_image-shrink_600_2000/0/1582176281444?e=2147483647&v=beta&t=QVzBFLJpbDlQMX_H5iKXr7Jr1w6Pm60tOJb47rjpX6Q',
+    metadata: {
+      script: metadata,
+    },
+  })
+  return session.url
+ },
+
+
   //===================== user login ===================
 
   userLoginService: async (findUser, password) => {
+  
     const comparePassword = await bcrypt.compare(password, findUser?.password);
     if (!comparePassword) {
       throw new Error("Wrong password");
@@ -71,6 +106,7 @@ module.exports = {
   //============== send otp ================
 
   sendOtpService: async (findUser) => {
+   
     const sendOtp = await sendOtpAndSave(
       findUser?.email,
       findUser?._id,
@@ -81,6 +117,7 @@ module.exports = {
   },
 
  
+
 
 
 };

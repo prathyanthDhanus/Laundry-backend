@@ -148,6 +148,7 @@ module.exports = {
 
   //=================== checking payment is done before the isCompleted field update  ====================
 
+  
   checkPaymentIsDoneDb: async (orderId) => {
     const findOrders = await orderModel
       .find({ _id: orderId, isPaid: true })
@@ -159,8 +160,7 @@ module.exports = {
         102
       );
     }
-    // console.log(findOrders)
-
+  
     const userInfo = findOrders[0]?.userId;
 
 

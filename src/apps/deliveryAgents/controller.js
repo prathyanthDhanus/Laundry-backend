@@ -146,7 +146,7 @@ module.exports = {
   updateIsCompletedField : async(req,res)=>{
     //passing userId from frontend
     const {userId,otp,orderId} = req.body;
-    const checkOtp = await verifyotpLoginDb(userId, otp);
+    const checkOtp = await verifyotpLoginDb(userId,otp);
     const findOrders = await updateIsCompletedFieldDb(checkOtp,orderId);
     
     return res.status(200).json({

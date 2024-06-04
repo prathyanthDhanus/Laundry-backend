@@ -25,6 +25,8 @@ router
 .get("/category-user",tokenVerifyUser,tryCatch(category.getCategory))
 .get("/sub-category/user",tokenVerifyUser,tryCatch(subCategory.getAllSubCategory))
 
+.post('/payment',tokenVerifyUser,tryCatch(user.userPayment))
+
 
 
 

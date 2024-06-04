@@ -3,8 +3,10 @@ const AppError = require("../../../utils/appError");
 const otpModel = require("../../otp/models/otpSchema");
 // const { passwordHashService } = require("./common");
 const bcrypt = require("bcrypt");
+const orderModel = require('../../orderDetails/model/orderSchema');
 
 module.exports = {
+
   //================ user register ===============
 
   userRegisterDB: async (body) => {
@@ -30,7 +32,7 @@ module.exports = {
 
   userLoginDB: async (email) => {
     const findUser = await userModel.findOne({ email: email });
-
+   
     if (findUser) {
       return findUser;
     }
@@ -118,5 +120,24 @@ module.exports = {
       );
     }
     return findUser;
+  },
+
+  //==================== payment section ===================
+
+  userPaymentDb : async(orderId)=>{
+    
+    const findOrder = await orderModel.find({_id:orderId , outForDelivery:true});
+  
+    if(findOrder.length===0){
+      throw new AppError(
+        "Field validation error:Payment failed",
+        "Order process out for delivery is not completed",
+        401
+      );
+    }
+    
+    const totalAmount = findOrder[0].grandTotalAmount;
+ 
+    return totalAmount;
   },
 };
