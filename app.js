@@ -3,7 +3,7 @@ const app = expres();
 const mongoose = require("mongoose");
 const cors = require('cors');
 const port = 3000;
-const helmet = require('helmet');
+
 
 
 //dotenv config
@@ -12,20 +12,9 @@ const url = process.env.MONGODB_URL_1 //mongodb url
 
 app.use(expres.json());
 app.use(cors());
-app.use(helmet());
 
-app.use(
-    helmet.contentSecurityPolicy({
-      directives: {
-        defaultSrc: ["'self'"],
-        fontSrc: ["'self'", "data:"],
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'"],
-        imgSrc: ["'self'", "data:"],
-        // Add other directives as needed
-      },
-    })
-  );
+
+
 
 const userRoute = require("./src/apps/user/route")
 app.use("/api/user",userRoute);
