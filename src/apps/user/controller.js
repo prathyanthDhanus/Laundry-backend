@@ -20,7 +20,7 @@ module.exports = {
 
   userRegister: async (req, res) => {
     const { body } = req;
-
+    console.log(body)
     const findUser = await userRegisterDB(body);
 
     return res.status(200).json({
