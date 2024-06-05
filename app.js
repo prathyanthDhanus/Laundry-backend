@@ -13,6 +13,9 @@ const url = process.env.MONGODB_URL_1 //mongodb url
 app.use(expres.json());
 app.use(cors());
 
+app.get('/',(req,res)=>{
+    res.send("hi aall")
+})
 
 
 
