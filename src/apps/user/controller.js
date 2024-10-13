@@ -133,7 +133,7 @@ module.exports = {
   userPayment  : async(req,res)=>{
 
     const {orderId} = req.body;
-     console.log("kooooi")
+  
     const findOrder = await userPaymentDb(orderId);
     const payment = await userPaymentService(findOrder);
     return res.status(200).json({
